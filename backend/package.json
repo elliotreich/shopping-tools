@@ -1,0 +1,22 @@
+{
+  "name": "shopping-compass-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Private price comparison tool — backend API & scrapers",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "init-db": "node -e \"require('./src/db').init()\"",
+    "test-db": "node -e \"const db = require('./src/db'); db.init(); console.log('DB OK'); process.exit(0)\""
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.0",
+    "better-sqlite3": "^11.7.0",
+    "fastify": "^5.2.0",
+    "playwright": "^1.51.0"
+  },
+  "devDependencies": {
+    "pino-pretty": "^11.0.0"
+  }
+}

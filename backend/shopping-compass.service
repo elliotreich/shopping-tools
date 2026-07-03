@@ -1,0 +1,20 @@
+[Unit]
+Description=Shopping Compass — Price Comparison Backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/Projects/Projects/dev/shopping-compass/backend
+ExecStart=/usr/bin/node src/server.js
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=8091
+Environment=HOST=0.0.0.0
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

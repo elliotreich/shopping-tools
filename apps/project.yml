@@ -1,0 +1,48 @@
+name: ShoppingCompass
+options:
+  bundleIdPrefix: com.elliotreich
+  deploymentTarget:
+    macOS: "14.0"
+    iOS: "17.0"
+  xcodeVersion: "15.0"
+
+packages:
+  ShoppingCompassKit:
+    path: shared/ShoppingCompassKit
+    group: Packages
+
+targets:
+  ShoppingCompass:
+    type: application
+    platform: macOS
+    sources:
+      - path: macos/Sources/ShoppingCompassApp
+    dependencies:
+      - package: ShoppingCompassKit
+        product: ShoppingCompassKit
+    info:
+      path: macos/ShoppingCompass/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.elliotreich.ShoppingCompass
+        CODE_SIGN_STYLE: Automatic
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SWIFT_INCLUDE_PATHS: "$(SRCROOT)/shared/ShoppingCompassKit/Sources"
+        FRAMEWORK_SEARCH_PATHS: "$(SRCROOT)/shared/ShoppingCompassKit/build/Debug $(inherited)"
+
+  ShoppingCompass-iOS:
+    type: application
+    platform: iOS
+    sources:
+      - path: iOS/ShoppingCompass
+    dependencies:
+      - package: ShoppingCompassKit
+        product: ShoppingCompassKit
+    info:
+      path: iOS/ShoppingCompass/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.elliotreich.ShoppingCompass.iOS
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
