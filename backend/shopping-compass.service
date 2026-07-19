@@ -6,7 +6,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/Projects/Projects/dev/shopping-compass/backend
+WorkingDirectory=/home/elliot/Projects/Projects/dev/shopping-compass/backend
 ExecStart=/usr/bin/node src/server.js
 Restart=on-failure
 RestartSec=5
