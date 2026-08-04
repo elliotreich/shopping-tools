@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+build-*/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.log
+data/*.sqlite*
+data/*.db

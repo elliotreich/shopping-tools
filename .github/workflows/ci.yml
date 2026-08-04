@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: python -m unittest discover -s tests -v
+        working-directory: backend
+      - run: python -m py_compile config.py resale.py server.py tests/*.py
+        working-directory: backend
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: xcodebuild -project ResaleWatcher.xcodeproj -scheme ResaleWatcher -configuration Debug -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build
