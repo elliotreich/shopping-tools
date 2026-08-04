@@ -1,0 +1,25 @@
+# Keep secrets and local artifacts out of git.
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Logs
+*.log
+logs/
+
+# Xcode/build artifacts
+build/
+build-*/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Local feed data
+data/*.sqlite*
+data/*.db
+data/*.json
