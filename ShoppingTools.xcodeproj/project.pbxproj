@@ -1,0 +1,411 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0CF6AC81B3992293C7B54054 /* ResaleWatcherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 299F753302A9E03714B5E120 /* ResaleWatcherApp.swift */; };
+		2D16DA2C1644DE3746092C9A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88F8233633CCA428C8784BD8 /* Assets.xcassets */; };
+		632479D49EC3AB19D3289C13 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86025E6E40A4C1A4DE80D64 /* Models.swift */; };
+		774A2A4A463B0A1C0C32EB76 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 82C646DE8F42176115EA0990 /* Assets.xcassets */; };
+		8FDC6AAE992007E844D3A1F1 /* ShoppingCompassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C495E16C3091A1176ACBB415 /* ShoppingCompassApp.swift */; };
+		9BC9A3D806D3F26E41E52DE4 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86025E6E40A4C1A4DE80D64 /* Models.swift */; };
+		E5273D9BFC30D9C194B27204 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C28C5EE50CAD88A7267314 /* APIClient.swift */; };
+		ED49DB56E6F61670E003B141 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36C28C5EE50CAD88A7267314 /* APIClient.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		299F753302A9E03714B5E120 /* ResaleWatcherApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResaleWatcherApp.swift; sourceTree = "<group>"; };
+		36C28C5EE50CAD88A7267314 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		57F4A6526B7CA0A6418020FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		82C646DE8F42176115EA0990 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		88F8233633CCA428C8784BD8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A86025E6E40A4C1A4DE80D64 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		A9FB9FCAB161ECB3F768AF1A /* ShoppingCompass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShoppingCompass.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C495E16C3091A1176ACBB415 /* ShoppingCompassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingCompassApp.swift; sourceTree = "<group>"; };
+		D5C110E2B061B2D0328460F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F291157F00574EFE38CAD454 /* ResaleWatcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ResaleWatcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		4E565504C4A3523DDBAB985E /* ResaleWatcher */ = {
+			isa = PBXGroup;
+			children = (
+				88F8233633CCA428C8784BD8 /* Assets.xcassets */,
+				D5C110E2B061B2D0328460F5 /* Info.plist */,
+				299F753302A9E03714B5E120 /* ResaleWatcherApp.swift */,
+			);
+			path = ResaleWatcher;
+			sourceTree = "<group>";
+		};
+		69CE6A8B2C95CE588FCE7217 = {
+			isa = PBXGroup;
+			children = (
+				4E565504C4A3523DDBAB985E /* ResaleWatcher */,
+				ECB57641188C9B3B80EB8594 /* Shared */,
+				D1D739887043D68368C78C61 /* ShoppingCompass */,
+				88A175B385B494624CDD1E06 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		88A175B385B494624CDD1E06 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F291157F00574EFE38CAD454 /* ResaleWatcher.app */,
+				A9FB9FCAB161ECB3F768AF1A /* ShoppingCompass.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D1D739887043D68368C78C61 /* ShoppingCompass */ = {
+			isa = PBXGroup;
+			children = (
+				82C646DE8F42176115EA0990 /* Assets.xcassets */,
+				57F4A6526B7CA0A6418020FA /* Info.plist */,
+				C495E16C3091A1176ACBB415 /* ShoppingCompassApp.swift */,
+			);
+			path = ShoppingCompass;
+			sourceTree = "<group>";
+		};
+		ECB57641188C9B3B80EB8594 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				36C28C5EE50CAD88A7267314 /* APIClient.swift */,
+				A86025E6E40A4C1A4DE80D64 /* Models.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4B3504E2F31FF883DDE16833 /* ShoppingCompass */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6018A3FB47CFDB8AD07AF76 /* Build configuration list for PBXNativeTarget "ShoppingCompass" */;
+			buildPhases = (
+				5B37BC3E9C63C815E6852348 /* Sources */,
+				0089A0E4A30727BBA57740A2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShoppingCompass;
+			packageProductDependencies = (
+			);
+			productName = ShoppingCompass;
+			productReference = A9FB9FCAB161ECB3F768AF1A /* ShoppingCompass.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F3ECD5E37C67126BB9C515CE /* ResaleWatcher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 46D5E0FD091B907379BB7C61 /* Build configuration list for PBXNativeTarget "ResaleWatcher" */;
+			buildPhases = (
+				CD46E1CCFFB7DF69E23E8A17 /* Sources */,
+				DFBC8CBE53B17A30F90B3BEA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ResaleWatcher;
+			packageProductDependencies = (
+			);
+			productName = ResaleWatcher;
+			productReference = F291157F00574EFE38CAD454 /* ResaleWatcher.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A6784DA735392F8178115FF5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = D98AB7B335366BC2EA424067 /* Build configuration list for PBXProject "ShoppingTools" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 69CE6A8B2C95CE588FCE7217;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 88A175B385B494624CDD1E06 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F3ECD5E37C67126BB9C515CE /* ResaleWatcher */,
+				4B3504E2F31FF883DDE16833 /* ShoppingCompass */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0089A0E4A30727BBA57740A2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				774A2A4A463B0A1C0C32EB76 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DFBC8CBE53B17A30F90B3BEA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D16DA2C1644DE3746092C9A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5B37BC3E9C63C815E6852348 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5273D9BFC30D9C194B27204 /* APIClient.swift in Sources */,
+				9BC9A3D806D3F26E41E52DE4 /* Models.swift in Sources */,
+				8FDC6AAE992007E844D3A1F1 /* ShoppingCompassApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD46E1CCFFB7DF69E23E8A17 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED49DB56E6F61670E003B141 /* APIClient.swift in Sources */,
+				632479D49EC3AB19D3289C13 /* Models.swift in Sources */,
+				0CF6AC81B3992293C7B54054 /* ResaleWatcherApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		18ADD31CADD65C0F4D9B3842 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ResaleWatcher/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.example.ResaleWatcher;
+				PRODUCT_NAME = "Resale Watcher";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A3734D7D6735975E1C058D0A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B444533B3E3B8475552230EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ShoppingCompass/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.example.ShoppingCompass;
+				PRODUCT_NAME = "Shopping Compass";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		D241A86D6F7FE698002A4C03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ShoppingCompass/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.example.ShoppingCompass;
+				PRODUCT_NAME = "Shopping Compass";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		DF4927A9DDC5D496AB268627 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ResaleWatcher/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.example.ResaleWatcher;
+				PRODUCT_NAME = "Resale Watcher";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F16295CC9A96CCD1A087545F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		46D5E0FD091B907379BB7C61 /* Build configuration list for PBXNativeTarget "ResaleWatcher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18ADD31CADD65C0F4D9B3842 /* Debug */,
+				DF4927A9DDC5D496AB268627 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A6018A3FB47CFDB8AD07AF76 /* Build configuration list for PBXNativeTarget "ShoppingCompass" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D241A86D6F7FE698002A4C03 /* Debug */,
+				B444533B3E3B8475552230EB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D98AB7B335366BC2EA424067 /* Build configuration list for PBXProject "ShoppingTools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3734D7D6735975E1C058D0A /* Debug */,
+				F16295CC9A96CCD1A087545F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A6784DA735392F8178115FF5 /* Project object */;
+}
