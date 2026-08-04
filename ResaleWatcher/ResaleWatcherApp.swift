@@ -4,13 +4,14 @@ import SwiftUI
 struct ResaleWatcherApp: App {
     var body: some Scene {
         WindowGroup("Resale Watcher") { ResaleWatcherView() }
+        Settings { APISettingsView() }
     }
 }
 
 struct ResaleWatcherView: View {
     @State private var listings: [ResaleListing] = []
     @State private var minScore = 50
-    @State private var status = "Loading watcher findings…"
+    @State private var status = "Loading resale findings…"
     @State private var isLoading = false
     private let client = APIClient()
 
@@ -53,13 +54,13 @@ struct ResaleWatcherView: View {
     }
 
     private func load() {
-        isLoading = true; status = "Loading from VPS…"
+        isLoading = true; status = "Loading from your backend…"
         Task {
             do {
                 let response = try await client.resale(minScore: minScore)
                 listings = response.listings
-                status = "Showing \(response.count) findings from the watcher database."
-            } catch { status = "Watcher unavailable: \(error.localizedDescription)" }
+                status = "Showing \(response.count) findings from the resale feed."
+            } catch { status = "Resale feed unavailable: \(error.localizedDescription)" }
             isLoading = false
         }
     }

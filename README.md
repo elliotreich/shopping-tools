@@ -5,7 +5,7 @@ Two small, self-hostable macOS tools backed by one dependency-light Python API:
 - **Shopping Compass** searches selected current retailers for candidate listings.
 - **Resale Watcher** displays scored resale listings from a SQLite feed and opens them in the default browser.
 
-This repository contains no credentials, personal data, retailer accounts, or deployment-specific paths. The resale endpoint accepts any SQLite database matching the documented schema below.
+This repository contains no credentials, personal data, retailer accounts, or deployment-specific paths. It does not include or depend on a shared hosted API: each user runs the backend on their own machine or server. The resale endpoint accepts any SQLite database matching the documented schema below.
 
 ## Architecture
 
@@ -60,7 +60,7 @@ xcodebuild -project ShoppingTools.xcodeproj -scheme ShoppingCompass build
 xcodebuild -project ShoppingTools.xcodeproj -scheme ResaleWatcher build
 ```
 
-The apps default to `http://127.0.0.1:8091/api`. Change `AppConfig.defaultAPI` in `Shared/Models.swift` or add a settings surface before distributing a build that points to another server. For a remote deployment, use HTTPS and remove the local HTTP exception from the app Info.plist.
+The apps default to `http://127.0.0.1:8091/api` and include a Settings panel for changing the backend address. Each user must run their own backend; this repository provides no shared API endpoint. For a remote deployment, use HTTPS and remove the local HTTP exception from the app Info.plist.
 
 Both apps include authored app icons in their asset catalogs:
 

@@ -4,6 +4,7 @@ import SwiftUI
 struct ShoppingCompassApp: App {
     var body: some Scene {
         WindowGroup("Shopping Compass") { ShoppingCompassView() }
+        Settings { APISettingsView() }
     }
 }
 

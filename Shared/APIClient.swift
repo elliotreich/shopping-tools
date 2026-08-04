@@ -66,3 +66,29 @@ struct LinkButton: View {
         .buttonStyle(.link)
     }
 }
+
+struct APISettingsView: View {
+    @AppStorage("apiBase") private var apiBase = AppConfig.defaultAPI
+
+    var body: some View {
+        Form {
+            Section("Backend address") {
+                TextField("API base URL", text: $apiBase)
+                    .textFieldStyle(.roundedBorder)
+                Text("Run your own backend and enter its address here. The public apps do not connect to a shared hosted service.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                HStack {
+                    Button("Use local default") { apiBase = AppConfig.defaultAPI }
+                    Spacer()
+                    Text("Example: https://your-server.example/api")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+        .frame(width: 520)
+    }
+}
