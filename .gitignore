@@ -14,6 +14,7 @@ logs/
 
 # Xcode/build artifacts
 build/
+build-*/
 DerivedData/
 *.xcuserstate
 xcuserdata/
