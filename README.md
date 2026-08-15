@@ -4,7 +4,7 @@ HTTP backend for Mac SwiftUI clients:
 
 - **Shopping Compass** — compares a product query across current retailers
   (Target, Walmart, Amazon, Home Depot, Costco) via a local SearXNG instance.
-- **Finder** — the single visual discovery app for goods and jobs. Chairs,
+- **Resale Watcher** — the single visual discovery app for goods and jobs. Chairs,
   patio furniture, menswear, and jobs are profiles in one workflow, not
   separate apps or runners.
 - **Discovery Review** — authenticated visual review inbox for patio goods and
