@@ -46,6 +46,16 @@ final class APIClient {
         try decoder.decode(SearchesResponse.self, from: await request("/discovery/searches")).searches
     }
 
+    func search(_ query: String, retailers: [String]) async throws -> SearchResponse {
+        var components = URLComponents(string: AppConfig.apiBase + "/search")
+        components?.queryItems = [
+            URLQueryItem(name: "q", value: query),
+            URLQueryItem(name: "retailers", value: retailers.joined(separator: ","))
+        ]
+        guard let path = components?.string?.replacingOccurrences(of: AppConfig.apiBase, with: "") else { throw APIError.invalidURL }
+        return try decoder.decode(SearchResponse.self, from: await request(path))
+    }
+
     func findings(searchID: String?, status: String = "new") async throws -> [DiscoveryFinding] {
         var components = URLComponents(string: AppConfig.apiBase + "/discovery/findings")
         components?.queryItems = [

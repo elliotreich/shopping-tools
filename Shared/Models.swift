@@ -64,6 +64,31 @@ struct SearchesResponse: Codable { let searches: [DiscoverySearch] }
 struct FindingsResponse: Codable { let findings: [DiscoveryFinding] }
 struct OperationsResponse: Codable { let operations: [DiscoveryOperation] }
 
+struct RetailerResult: Codable, Identifiable {
+    var id: String { url }
+    let retailer: String
+    let title: String
+    let url: String
+    let snippet: String
+}
+
+struct RetailerSearchBlock: Codable, Identifiable {
+    var id: String { retailer }
+    let retailer: String
+    let name: String
+    let domain: String
+    let results: [RetailerResult]
+    let error: String?
+}
+
+struct SearchResponse: Codable {
+    let query: String
+    let retailers: [RetailerSearchBlock]
+    let errors: [String]
+}
+
+struct HealthResponse: Codable { let status: String }
+
 enum AppConfig {
     static let defaultAPI = "http://100.121.190.104:8091/api"
     static var apiBase: String { UserDefaults.standard.string(forKey: "apiBase") ?? defaultAPI }
