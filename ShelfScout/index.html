@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shelf Scout - price per unit, all-in</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M7 8h10"/><path d="M9 13h6"/><path d="M8 18h8"/></svg>
+    </span>
+    <span class="brand-name">Shelf Scout</span>
+    <label class="area-field">
+      <span class="sr-only">Area</span>
+      <input id="area" type="text" value="Brooklyn, NY" spellcheck="false" aria-label="Your area">
+    </label>
+  </div>
+  <div class="controls">
+    <label class="check" title="Add sales tax to every offer (edit per store or per offer)">
+      <input type="checkbox" id="taxOn" checked>
+      <span>Tax</span>
+    </label>
+    <div class="membership-toggle" id="headerMemberships" role="group" aria-label="Memberships"></div>
+    <button id="btnCopy" class="btn subtle" type="button">Copy table</button>
+    <button id="btnExport" class="btn subtle" type="button">Export</button>
+    <button id="btnImport" class="btn subtle" type="button">Import</button>
+    <button id="btnReset" class="btn subtle danger" type="button">Reset</button>
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<div id="sampleNotice" class="notice" hidden>
+  <span>Sample prices loaded - swap in today's shelf prices.</span>
+  <button id="btnDismissSample" class="btn small" type="button">Dismiss</button>
+</div>
+
+<main class="layout">
+  <section class="compare" aria-label="Price comparison">
+    <div class="itembar" id="itemBar" role="tablist" aria-label="Items"></div>
+    <div class="rows-head" aria-hidden="true">
+      <span class="c-rank">#</span>
+      <span class="c-store">Store</span>
+      <span class="c-size">Size</span>
+      <span class="c-deal">Deal</span>
+      <span class="c-unit">Unit price</span>
+      <span class="c-allin">All-in / unit</span>
+      <span class="c-actions"></span>
+    </div>
+    <div class="rows" id="offerRows"></div>
+    <div class="empty" id="emptyState" hidden>
+      <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16l-1.5 12.5a2 2 0 0 1-2 1.5h-9a2 2 0 0 1-2-1.5L4 7z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>
+      <h1>No offers yet</h1>
+      <p>Add your first offer from the panel, or load a worked example.</p>
+      <div class="empty-actions">
+        <button id="btnAddFirst" class="btn primary" type="button">Add an offer</button>
+        <button id="btnLoadSample" class="btn subtle" type="button">Load sample prices</button>
+      </div>
+    </div>
+  </section>
+
+  <aside class="rail">
+    <section class="panel" aria-label="Add an offer">
+      <div class="panel-head">
+        <h2 id="formTitle">Add an offer</h2>
+        <button id="btnCancelEdit" class="icon-btn" type="button" title="Cancel editing" hidden>
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="field">
+        <label for="fPaste">Paste a price</label>
+        <input id="fPaste" type="text" placeholder="6.49 for 18.9 oz / 2 for $10" spellcheck="false" autocomplete="off">
+        <p class="hint" id="pasteHint"></p>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="fItem">Item</label>
+          <input id="fItem" type="text" list="itemList" placeholder="Fruity Pebbles" spellcheck="false" autocomplete="off">
+          <datalist id="itemList"></datalist>
+        </div>
+        <div class="field">
+          <label for="fStore">Store</label>
+          <select id="fStore"></select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="fPrefillServer">Prefill server</label>
+        <div class="prefill-row">
+          <input id="fPrefillServer" type="text" placeholder="http://127.0.0.1:8091" spellcheck="false" autocomplete="off">
+          <button id="btnPrefill" class="btn small primary" type="button" title="Search this item's prices">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            Search
+          </button>
+        </div>
+        <div id="prefillResults" class="prefill-results" hidden></div>
+      </div>
+      <div class="field">
+        <span class="label">How</span>
+        <div class="seg" id="fFulfill" role="radiogroup" aria-label="Fulfillment">
+          <button type="button" role="radio" data-fulfill="instore" aria-checked="true">In store</button>
+          <button type="button" role="radio" data-fulfill="delivery" aria-checked="false">Delivery</button>
+          <button type="button" role="radio" data-fulfill="shipping" aria-checked="false">Shipping</button>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="fPrice">Price ($)</label>
+          <input id="fPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="6.49">
+        </div>
+        <div class="field">
+          <label for="fSize">Size</label>
+          <input id="fSize" type="number" min="0" step="any" inputmode="decimal" placeholder="18.9">
+        </div>
+        <div class="field">
+          <label for="fUnitType">Kind</label>
+          <select id="fUnitType"></select>
+        </div>
+        <div class="field">
+          <label for="fUnit">Unit</label>
+          <select id="fUnit"></select>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label for="fDeal">Deal</label>
+          <select id="fDeal"></select>
+        </div>
+        <div class="field">
+          <label for="fTax">Tax % (blank = store)</label>
+          <input id="fTax" type="number" min="0" step="0.1" inputmode="decimal" placeholder="8.875">
+        </div>
+      </div>
+      <div class="deal-fields" id="dealFields">
+        <div class="field">
+          <label id="lblDealVal">Value</label>
+          <input id="fDealVal" type="number" min="0" step="any" inputmode="decimal">
+        </div>
+        <div class="field" id="wrapDealExtra">
+          <label id="lblDealExtra">And</label>
+          <input id="fDealExtra" type="number" min="0" step="any" inputmode="decimal">
+        </div>
+      </div>
+      <div class="field">
+        <label for="fNote">Note</label>
+        <input id="fNote" type="text" placeholder="Optional" spellcheck="false">
+      </div>
+      <button id="btnAddOffer" class="btn primary wide" type="button">Add offer</button>
+    </section>
+
+    <section class="panel" aria-label="Stores">
+      <div class="panel-head">
+        <h2>Stores</h2>
+        <button id="btnAddStore" class="btn small" type="button">Add store</button>
+      </div>
+      <div id="storeList" class="store-list"></div>
+    </section>
+
+    <section class="panel" aria-label="Memberships">
+      <div class="panel-head">
+        <h2>My memberships</h2>
+      </div>
+      <div class="member-chips" id="memberChips"></div>
+      <p class="panel-note">An active membership waives delivery fees on stores configured with it.</p>
+    </section>
+  </aside>
+</main>
+
+<footer class="foot">Saved locally in this browser</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="app.js"></script>
+</body>
+</html>

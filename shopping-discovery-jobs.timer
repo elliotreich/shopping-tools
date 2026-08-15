@@ -1,0 +1,10 @@
+[Unit]
+Description=Run job discovery daily
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+Unit=shopping-discovery-runner@jobs.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,17 @@
+[Unit]
+Description=Shopping Tools discovery run (%i)
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=elliot
+WorkingDirectory=/home/elliot/apps/shopping-tools
+Environment=DISCOVERY_DB_PATH=/home/elliot/var/lib/shopping-tools/discovery.sqlite3
+Environment=DISCOVERY_LOCK_PATH=/home/elliot/var/lock/shopping-tools-discovery.lock
+Environment=JOB_AGENTS_DIR=/home/elliot/syncthing-shared/2_areas/Digital Systems/job-agents
+ExecStart=/usr/bin/timeout --signal=TERM 5m /usr/bin/python3 discovery_run.py --search-id %i
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

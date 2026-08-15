@@ -1,0 +1,10 @@
+[Unit]
+Description=Run patio discovery four times daily
+
+[Timer]
+OnCalendar=*-*-* 08,12,16,20:30:00
+Persistent=true
+Unit=shopping-discovery-runner@patio.service
+
+[Install]
+WantedBy=timers.target
