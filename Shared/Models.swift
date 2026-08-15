@@ -1,12 +1,23 @@
 import Foundation
 
 struct SearchProfile: Codable {
+    let profileKey: String?
     let keywords: [String]?
     let budget: Double?
     let location: String?
     let radiusMiles: Int?
     let vehicle: String?
     let sizeConstraints: String?
+}
+
+struct SearchTemplate: Codable, Identifiable {
+    let id: String
+    let name: String
+    let kind: String
+    let profile: SearchProfile
+    let sourceAdapters: [String]
+    let schedule: String
+    let status: String
 }
 
 struct DiscoverySearch: Codable, Identifiable {

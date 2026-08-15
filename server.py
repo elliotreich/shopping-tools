@@ -122,6 +122,8 @@ class ShoppingToolsHandler(BaseHTTPRequestHandler):
                 self.handle_resale_summary()
             elif path == "/api/discovery/searches":
                 self.handle_discovery_searches(params)
+            elif path == "/api/discovery/templates":
+                self.handle_discovery_templates()
             elif path == "/api/discovery/findings":
                 self.handle_discovery_findings(params)
             elif path == "/api/discovery/operations":
@@ -148,7 +150,9 @@ class ShoppingToolsHandler(BaseHTTPRequestHandler):
         try:
             length = min(int(self.headers.get("Content-Length", "0")), 100_000)
             body = json.loads(self.rfile.read(length) or b"{}")
-            if path.startswith("/api/discovery/searches/") and path.endswith("/actions"):
+            if path == "/api/discovery/searches":
+                self.handle_discovery_search_create(body)
+            elif path.startswith("/api/discovery/searches/") and path.endswith("/actions"):
                 self.handle_discovery_search_action(path.split("/")[4], body.get("action"), body)
             elif path.startswith("/api/discovery/findings/") and path.endswith("/actions"):
                 self.handle_discovery_finding_action(path.split("/")[4], body.get("action"))
@@ -173,6 +177,7 @@ class ShoppingToolsHandler(BaseHTTPRequestHandler):
                     "/api/resale",
                     "/api/resale/summary",
                     "/api/discovery/searches",
+                    "/api/discovery/templates",
                     "/api/discovery/findings",
                     "/api/discovery/operations",
                     "/app/",
@@ -184,6 +189,28 @@ class ShoppingToolsHandler(BaseHTTPRequestHandler):
         if not self._authorized():
             return
         self._send_json({"searches": discovery_store.list_searches()})
+
+    def handle_discovery_templates(self):
+        if not self._authorized():
+            return
+        self._send_json({"templates": discovery_store.list_templates()})
+
+    def handle_discovery_search_create(self, body):
+        if body.get("action", "create") != "create":
+            self._send_error_json(400, "search creation requires action=create")
+            return
+        try:
+            search = discovery_store.create_search(
+                body.get("template_id") or body.get("templateId"),
+                name=body.get("name"),
+                search_id=body.get("id"),
+                schedule=body.get("schedule"),
+                status=body.get("status", "paused"),
+            )
+        except (TypeError, ValueError) as exc:
+            self._send_error_json(400, str(exc))
+            return
+        self._send_json({"search": search}, 201)
 
     def handle_discovery_findings(self, params):
         if not self._authorized():

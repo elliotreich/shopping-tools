@@ -6,6 +6,8 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from discovery_profiles import get_template, templates
+
 
 DEFAULT_DB_PATH = "/var/lib/shopping-tools/discovery.sqlite3"
 
@@ -101,48 +103,28 @@ def init(path=None):
 
 def _seed_defaults(conn):
     now = utc_now()
-    defaults = [
-        (
-            "patio",
-            "Patio tables under $50",
-            "goods",
-            {
-                "keywords": ["patio table", "outdoor table", "bistro table", "garden table"],
-                "budget": 50,
-                "location": "NYC metro",
-                "radius_miles": 40,
-                "vehicle": "Honda Accord",
-                "size_constraints": "fits in vehicle",
-            },
-            ["craigslist-indexed", "facebook-public-indexed"],
-            "30 8,12,16,20 * * *",
-        ),
-        (
-            "jobs",
-            "Policy, civic, arts, and media jobs",
-            "jobs",
-            {
-                "keywords": ["policy", "civic", "arts", "media", "public service"],
-                "location": "NYC or remote",
-                "radius_miles": 50,
-            },
-            ["job-agents-json"],
-            "0 8 * * *",
-        ),
-    ]
-    for search_id, name, kind, profile, adapters, schedule in defaults:
+    for definition in templates():
+        search_id = definition["id"]
+        name = definition["name"]
+        kind = definition["kind"]
+        profile = definition["profile"]
+        adapters = definition["source_adapters"]
+        schedule = definition["schedule"]
         conn.execute(
             """
             INSERT OR IGNORE INTO searches
             (id,name,kind,profile_json,source_adapters_json,schedule,status,created_at,updated_at)
             VALUES (?,?,?,?,?,?,?,?,?)
             """,
-            (search_id, name, kind, json.dumps(profile), json.dumps(adapters), schedule, "active", now, now),
+            (search_id, name, kind, json.dumps(profile), json.dumps(adapters), schedule, definition["status"], now, now),
         )
-        status = conn.execute("SELECT status FROM searches WHERE id=?", (search_id,)).fetchone()["status"]
+        row = conn.execute("SELECT profile_json, status FROM searches WHERE id=?", (search_id,)).fetchone()
+        stored_profile = _json(row["profile_json"], {})
+        merged_profile = dict(profile)
+        merged_profile.update(stored_profile)
         conn.execute(
-            "UPDATE searches SET next_run_at=? WHERE id=?",
-            (_next_run_at(schedule) if status == "active" else None, search_id),
+            "UPDATE searches SET profile_json=?, next_run_at=?, updated_at=? WHERE id=?",
+            (json.dumps(merged_profile), _next_run_at(schedule) if row["status"] == "active" else None, now, search_id),
         )
 
 
@@ -194,6 +176,50 @@ def get_search(search_id, path=None):
     with connect(path) as conn:
         row = conn.execute("SELECT * FROM searches WHERE id=?", (search_id,)).fetchone()
         return _search(row) if row else None
+
+
+def list_templates():
+    return templates()
+
+
+def create_search(template_id, name=None, search_id=None, schedule=None, status=None, path=None):
+    definition = get_template(template_id)
+    if not definition:
+        raise ValueError(f"unknown search template: {template_id}")
+    search_id = (search_id or definition["id"]).strip().lower().replace(" ", "-")
+    if not search_id or any(character not in "abcdefghijklmnopqrstuvwxyz0123456789-_" for character in search_id):
+        raise ValueError("search id may contain only lowercase letters, numbers, hyphens, and underscores")
+    name = (name or definition["name"]).strip()
+    schedule = schedule or definition["schedule"]
+    status = status or "paused"
+    if status not in {"active", "paused", "completed"}:
+        raise ValueError("status must be active, paused, or completed")
+    init(path)
+    now = utc_now()
+    with connect(path) as conn:
+        try:
+            conn.execute(
+                """
+                INSERT INTO searches
+                (id,name,kind,profile_json,source_adapters_json,schedule,status,next_run_at,created_at,updated_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?)
+                """,
+                (
+                    search_id,
+                    name,
+                    definition["kind"],
+                    json.dumps(definition["profile"]),
+                    json.dumps(definition["source_adapters"]),
+                    schedule,
+                    status,
+                    _next_run_at(schedule) if status == "active" else None,
+                    now,
+                    now,
+                ),
+            )
+        except sqlite3.IntegrityError as exc:
+            raise ValueError(f"search id already exists: {search_id}") from exc
+    return get_search(search_id, path)
 
 
 def list_findings(search_id=None, status=None, limit=100, path=None):

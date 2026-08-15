@@ -7,7 +7,8 @@ HTTP backend for Mac SwiftUI clients:
 - **Resale Watcher** — read-only view of Menswear Watcher's scored resale
   listings (`seen.db`).
 - **Discovery Review** — authenticated visual review inbox for patio goods and
-  job findings, with run health and persistent review actions.
+  job findings, with run health and persistent review actions. All recurring
+  searches use this one runner, database, API, and Mac app.
 
 Zero third-party dependencies: Python stdlib only (`http.server`, `sqlite3`,
 `urllib`, `json`). The legacy backend runs on port **8091**; the authenticated
@@ -45,16 +46,29 @@ The review app uses `/api/discovery/*` and a canonical SQLite database outside
 the code checkout. Every request requires `Authorization: Bearer <token>`;
 the token is supplied by `DISCOVERY_API_TOKEN` and is never stored in Git.
 
-The first vertical slice has two seeded searches:
+The unified workflow seeds these searches:
 
-- `patio` — indexed Craigslist NYC-area patio/table results, including price,
+- `office-chair` — the proper ergonomic office-chair need, normally completed
+  after the one-time purchase.
+- `garage-chair` — a separate compact, comfortable garage-chair search, normally
+  paused until needed.
+- `patio` — the active dogfood search for indexed Craigslist NYC-area
+  patio/table results, including price,
   source link, location, score reasons, and image URLs where indexed metadata
-  provides them. Facebook Marketplace is represented as a constrained public
-  adapter placeholder; logged-in collection remains a separate browser-session
-  workflow.
+  provides them. Facebook Marketplace uses a constrained public/indexed
+  adapter; logged-in collection remains a separate browser-session workflow.
+- `patio-furniture` — broader outdoor chairs, benches, and sets.
+- `shelving` — storage shelves, bookcases, and garage racks.
+- `tools` — hand tools and workshop equipment.
+- `appliances` — small appliances that can fit the Accord.
 - `jobs` — persisted records from the existing `job-agents/jobs-*.json` files,
   normalized into the same finding model with company, role, location, salary,
-  fit score, source link, and application status.
+  fit score, source link, and application status. Jobs are a separate finding
+  kind, but still use the same review inbox and operations history.
+
+Goods searches default to free or under $50, 11367/NYC-area pickup, and Honda
+Accord transport constraints. One-time goods searches are seeded paused; patio
+and jobs are seeded active. Search profiles are templates, not separate repos.
 
 Run ingestion locally or from the committed VPS checkout:
 
@@ -68,14 +82,20 @@ python3 discovery_run.py --search-id patio
 API routes:
 
 - `GET /api/discovery/searches`
+- `GET /api/discovery/templates`
+- `POST /api/discovery/searches` with `template_id`, `id`, `name`, `schedule`,
+  and `status` to create another search from a shared profile template.
 - `GET /api/discovery/findings?search_id=patio&status=new&limit=100`
 - `GET /api/discovery/operations?search_id=patio`
 - `POST /api/discovery/searches/<id>/actions` with `run`, `pause`, `resume`, `complete`, or `edit` (the edit body may update name, keywords, budget, location, and schedule)
 - `POST /api/discovery/findings/<id>/actions` with `save`, `dismiss`, `contacted`, `purchased`, `applied`, `expired`, or `restore`
 
-The committed `shopping-discovery-runner@.service` plus the patio and jobs
-timers provide bounded, locked, journaled runs. Install them only after the
-checkout and outside-checkout data directories exist.
+The committed `shopping-discovery-runner@.service` is the per-search execution
+unit. The unified `shopping-discovery-scheduler.service` and timer dispatch all
+active searches from their stored schedules, with one shared lock and run
+history. Install the scheduler only after the checkout and outside-checkout
+data directories exist, and disable the legacy patio/jobs timers during the
+cutover so a search cannot run twice.
 
 The review API is isolated on port `8092` while the legacy Shopping Tools
 service remains on `8091`; this permits a controlled migration without

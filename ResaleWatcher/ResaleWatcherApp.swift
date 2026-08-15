@@ -10,6 +10,7 @@ struct ResaleWatcherApp: App {
 @MainActor
 final class DiscoveryModel: ObservableObject {
     @Published var searches: [DiscoverySearch] = []
+    @Published var templates: [SearchTemplate] = []
     @Published var findings: [DiscoveryFinding] = []
     @Published var operations: [DiscoveryOperation] = []
     @Published var selectedSearchID: String?
@@ -22,6 +23,7 @@ final class DiscoveryModel: ObservableObject {
         isLoading = true
         do {
             searches = try await client.searches()
+            templates = try await client.templates()
             if selectedSearchID == nil { selectedSearchID = searches.first?.id }
             findings = try await client.findings(searchID: selectedSearchID, status: findingStatus)
             operations = try await client.operations(searchID: selectedSearchID)
@@ -57,6 +59,14 @@ final class DiscoveryModel: ObservableObject {
         do {
             try await client.findingAction(finding.id, action)
             message = "Marked \(action)."
+            await refresh()
+        } catch { message = error.localizedDescription }
+    }
+
+    func createSearch(templateID: String, searchID: String, name: String, schedule: String, status: String) async {
+        do {
+            try await client.createSearch(templateID: templateID, searchID: searchID, name: name, schedule: schedule, status: status)
+            message = "Created \(name)."
             await refresh()
         } catch { message = error.localizedDescription }
     }
@@ -186,6 +196,7 @@ struct FindingCard: View {
 struct SearchesView: View {
     @ObservedObject var model: DiscoveryModel
     @State private var editing: DiscoverySearch?
+    @State private var adding = false
 
     var body: some View {
         List(model.searches) { search in
@@ -203,7 +214,75 @@ struct SearchesView: View {
                 }.buttonStyle(.borderless)
             }.padding(.vertical, 8)
         }.navigationTitle("Searches")
+            .toolbar {
+                ToolbarItem {
+                    Button("Add Search", systemImage: "plus") { adding = true }
+                }
+            }
             .sheet(item: $editing) { search in EditSearchView(search: search, model: model) }
+            .sheet(isPresented: $adding) { NewSearchView(model: model) }
+    }
+}
+
+struct NewSearchView: View {
+    @ObservedObject var model: DiscoveryModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var templateID = ""
+    @State private var searchID = ""
+    @State private var name = ""
+    @State private var schedule = "0 10 * * *"
+    @State private var status = "paused"
+
+    private var selectedTemplate: SearchTemplate? { model.templates.first(where: { $0.id == templateID }) }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Add search").font(.title.bold())
+            Picker("Template", selection: $templateID) {
+                ForEach(model.templates) { template in
+                    Text(template.name).tag(template.id)
+                }
+            }
+            .onChange(of: templateID) { _, value in
+                guard let template = model.templates.first(where: { $0.id == value }) else { return }
+                name = template.name + " copy"
+                searchID = template.id + "-copy"
+                schedule = template.schedule
+            }
+            TextField("Search id", text: $searchID)
+            TextField("Name", text: $name)
+            TextField("Cron schedule (UTC)", text: $schedule)
+            Picker("Initial status", selection: $status) {
+                Text("Paused").tag("paused")
+                Text("Active").tag("active")
+            }
+            if let template = selectedTemplate {
+                Text("Uses \(template.sourceAdapters.joined(separator: ", ")) and the \(template.kind) finding workflow.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            HStack {
+                Spacer()
+                Button("Cancel") { dismiss() }
+                Button("Create") {
+                    Task {
+                        await model.createSearch(templateID: templateID, searchID: searchID, name: name, schedule: schedule, status: status)
+                        dismiss()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(templateID.isEmpty || searchID.isEmpty || name.isEmpty || schedule.isEmpty)
+            }
+        }
+        .padding(24)
+        .frame(width: 480)
+        .onAppear {
+            if templateID.isEmpty, let first = model.templates.first {
+                templateID = first.id
+                name = first.name + " copy"
+                searchID = first.id + "-copy"
+                schedule = first.schedule
+            }
+        }
     }
 }
 

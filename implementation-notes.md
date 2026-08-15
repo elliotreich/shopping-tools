@@ -1,7 +1,7 @@
 # Implementation Notes — Shopping Tools Backend
 
-Date: 2026-08-03
-Status: implemented, tested, smoke-checked. Systemd deliberately NOT deployed.
+Date: 2026-08-15
+Status: unified discovery implementation complete and locally verified; VPS scheduler cutover remains an explicit deployment step.
 
 ## What was built
 
@@ -11,6 +11,8 @@ A dependency-light Python backend (stdlib only) for two Mac SwiftUI clients:
   (`/api/search` → local SearXNG).
 - **Resale Watcher** — read-only view of Menswear Watcher's scored listings
   (`/api/resale`, `/api/resale/summary`).
+- **Discovery Review** — one authenticated search/run/finding store for goods
+  profiles and jobs, with a SwiftUI review/control surface.
 
 ### Module layout
 
@@ -143,11 +145,23 @@ Started with:
 - `GET /api/search` (no q) → 400; `GET /api/nope` → 404 ✅
 - Confirmed `seen.db` untouched: mtime unchanged, no journal/WAL/SHM files ✅
 
+## Unified discovery implementation — 2026-08-15
+
+- Added shared templates for office chairs, garage chairs, patio tables,
+  broader patio furniture, shelving, tools, appliances, and jobs.
+- Added generic Craigslist and public/indexed Facebook adapters with profile
+  budgets, free-item handling, transport notes, score reasons, and hard rejects.
+- Added dynamic search creation from templates through the API and Mac app.
+- Added one UTC scheduler that dispatches every active search through the same
+  runner, lock, database, API, and operations history.
+- Verified 80 Python tests, Python compilation, and the Resale Watcher and
+  Shopping Compass macOS builds.
+
 ## Not done / future work
 
-- **Systemd unit deliberately not created** (per spec). Next step when
-  requested: a `shopping-tools.service` running `python3 server.py` with
-  `SHOPPING_TOOLS_DB_PATH` set, bound to 127.0.0.1 or via the existing proxy.
+- Install and enable `shopping-discovery-scheduler.timer` on the VPS, disable
+  the old patio/jobs timers, restart the discovery API, and verify the live
+  seeded searches before removing the legacy Chair Finder cron.
 - No auth. Fine for Tailscale/VPS-internal use; add a bearer token behind the
   reverse proxy if the API is ever exposed publicly.
 - `/api/search` currently hits SearXNG per retailer serially. Parallelizing

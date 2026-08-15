@@ -1,0 +1,13 @@
+[Unit]
+Description=Run due Shopping Tools discovery searches
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=elliot
+WorkingDirectory=/home/elliot/apps/shopping-tools
+EnvironmentFile=/home/elliot/var/lib/shopping-tools/discovery.env
+ExecStart=/usr/bin/python3 /home/elliot/apps/shopping-tools/discovery_scheduler.py
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=20min

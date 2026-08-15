@@ -5,6 +5,9 @@ import unittest
 from unittest.mock import patch
 
 import discovery_store
+import discovery_run
+from discovery_profiles import templates
+from discovery_scheduler import schedule_matches
 from discovery_sources import CraigslistParser
 
 
@@ -17,9 +20,9 @@ class StoreTests(unittest.TestCase):
         self.temp.cleanup()
 
     def test_defaults_and_action_persist(self):
-        with patch.dict(os.environ, {"DISCOVERY_DB_PATH": self.db}):
+        with patch.dict(os.environ, {"DISCOVERY_DB_PATH": self.db, "DISCOVERY_LOCK_PATH": os.path.join(self.temp.name, "discovery.lock")}):
             discovery_store.init()
-            self.assertEqual({"patio", "jobs"}, {item["id"] for item in discovery_store.list_searches()})
+            self.assertEqual({item["id"] for item in templates()}, {item["id"] for item in discovery_store.list_searches()})
             discovery_store.upsert_finding({
                 "search_id": "jobs", "kind": "jobs", "source": "test", "source_id": "job-1",
                 "title": "Policy Analyst", "company": "Civic Lab", "role": "Policy Analyst",
@@ -57,6 +60,40 @@ class StoreTests(unittest.TestCase):
             })
             self.assertEqual(1, discovery_store.expire_missing("jobs", ["current"]))
             self.assertEqual("expired", discovery_store.list_findings("jobs", "expired")[0]["status"])
+
+    def test_create_search_from_template_is_paused_and_editable(self):
+        with patch.dict(os.environ, {"DISCOVERY_DB_PATH": self.db}):
+            created = discovery_store.create_search(
+                "garage-chair",
+                search_id="garage-chair-second-pass",
+                name="Garage chair second pass",
+            )
+            self.assertEqual("garage-chair", created["profile"]["profile_key"])
+            self.assertEqual("paused", created["status"])
+            self.assertIsNone(created["next_run_at"])
+
+    def test_scheduler_matches_shared_utc_schedules(self):
+        from datetime import datetime, timezone
+
+        self.assertTrue(schedule_matches("30 8,12,16,20 * * *", datetime(2026, 8, 15, 12, 30, tzinfo=timezone.utc)))
+        self.assertFalse(schedule_matches("30 8,12,16,20 * * *", datetime(2026, 8, 15, 12, 15, tzinfo=timezone.utc)))
+
+    def test_runner_dispatches_any_goods_profile_through_shared_adapters(self):
+        with patch.dict(os.environ, {"DISCOVERY_DB_PATH": self.db, "DISCOVERY_LOCK_PATH": os.path.join(self.temp.name, "discovery.lock")}):
+            discovery_store.init()
+            discovery_store.apply_search_action("garage-chair", "resume")
+            with patch.object(discovery_run, "fetch_craigslist_for_search", return_value=(
+                [{
+                    "search_id": "garage-chair", "kind": "goods", "source": "craigslist",
+                    "source_id": "garage-1", "title": "$20 folding lounge chair",
+                    "url": "https://example.com/garage-1", "price": 20, "score": 80,
+                    "score_reasons": ["within budget"],
+                }], [], 2
+            )), patch.object(discovery_run, "fetch_facebook_indexed", return_value=([], [], 0)):
+                self.assertEqual(0, discovery_run.run("garage-chair"))
+            operation = discovery_store.list_operations("garage-chair")[0]
+            self.assertEqual(1, operation["retained_count"])
+            self.assertEqual(2, operation["rejected_count"])
 
 
 class SourceTests(unittest.TestCase):

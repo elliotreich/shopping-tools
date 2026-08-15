@@ -46,6 +46,22 @@ final class APIClient {
         try decoder.decode(SearchesResponse.self, from: await request("/discovery/searches")).searches
     }
 
+    func templates() async throws -> [SearchTemplate] {
+        struct Response: Codable { let templates: [SearchTemplate] }
+        return try decoder.decode(Response.self, from: await request("/discovery/templates")).templates
+    }
+
+    func createSearch(templateID: String, searchID: String, name: String, schedule: String, status: String) async throws {
+        _ = try await request("/discovery/searches", method: "POST", body: [
+            "action": "create",
+            "template_id": templateID,
+            "id": searchID,
+            "name": name,
+            "schedule": schedule,
+            "status": status
+        ])
+    }
+
     func search(_ query: String, retailers: [String]) async throws -> SearchResponse {
         var components = URLComponents(string: AppConfig.apiBase + "/search")
         components?.queryItems = [

@@ -61,6 +61,27 @@ class ServerTestCase(unittest.TestCase):
         except urllib.error.HTTPError as exc:
             return exc.code, json.loads(exc.read().decode("utf-8"))
 
+    def _get_auth(self, path):
+        request = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}{path}",
+            headers={"Authorization": "Bearer test-token"},
+        )
+        with urllib.request.urlopen(request, timeout=10) as resp:
+            return resp.status, json.loads(resp.read().decode("utf-8"))
+
+    def _post_auth(self, path, body):
+        request = urllib.request.Request(
+            f"http://127.0.0.1:{self.port}{path}",
+            data=json.dumps(body).encode("utf-8"),
+            method="POST",
+            headers={
+                "Authorization": "Bearer test-token",
+                "Content-Type": "application/json",
+            },
+        )
+        with urllib.request.urlopen(request, timeout=10) as resp:
+            return resp.status, json.loads(resp.read().decode("utf-8"))
+
 
 class HealthTests(ServerTestCase):
     def test_health_ok(self):
@@ -74,6 +95,44 @@ class HealthTests(ServerTestCase):
     def test_health_cors_header(self):
         _, _, headers = self._get("/api/health")
         self.assertEqual(headers.get("Access-Control-Allow-Origin"), "*")
+
+
+class DiscoveryControlTests(ServerTestCase):
+    def setUp(self):
+        super().setUp()
+        self.discovery_env = mock.patch.dict(
+            os.environ,
+            {
+                "DISCOVERY_DB_PATH": os.path.join(self.tmp.name, "discovery.sqlite3"),
+                "DISCOVERY_API_TOKEN": "test-token",
+            },
+        )
+        self.discovery_env.start()
+        self.addCleanup(self.discovery_env.stop)
+
+    def test_templates_and_seeded_searches_are_visible(self):
+        status, templates = self._get_auth("/api/discovery/templates")
+        self.assertEqual(status, 200)
+        self.assertIn("garage-chair", {item["id"] for item in templates["templates"]})
+        status, searches = self._get_auth("/api/discovery/searches")
+        self.assertEqual(status, 200)
+        self.assertIn("patio", {item["id"] for item in searches["searches"]})
+
+    def test_create_search_from_template(self):
+        status, body = self._post_auth(
+            "/api/discovery/searches",
+            {
+                "action": "create",
+                "template_id": "garage-chair",
+                "id": "garage-chair-test",
+                "name": "Garage chair test",
+                "schedule": "0 10 * * *",
+                "status": "paused",
+            },
+        )
+        self.assertEqual(status, 201)
+        self.assertEqual("garage-chair-test", body["search"]["id"])
+        self.assertEqual("paused", body["search"]["status"])
 
 
 class RetailersTests(ServerTestCase):
