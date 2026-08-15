@@ -43,6 +43,10 @@ class StoreTests(unittest.TestCase):
             searches = {item["id"]: item for item in discovery_store.list_searches()}
             self.assertTrue(searches["patio"]["next_run_at"])
             self.assertTrue(searches["jobs"]["next_run_at"])
+            discovery_store.apply_search_action("patio", "pause")
+            self.assertIsNone(discovery_store.get_search("patio")["next_run_at"])
+            discovery_store.apply_search_action("patio", "resume")
+            self.assertTrue(discovery_store.get_search("patio")["next_run_at"])
 
     def test_missing_new_findings_become_expired(self):
         with patch.dict(os.environ, {"DISCOVERY_DB_PATH": self.db}):

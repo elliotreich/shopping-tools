@@ -139,6 +139,11 @@ def _seed_defaults(conn):
             """,
             (search_id, name, kind, json.dumps(profile), json.dumps(adapters), schedule, "active", now, now),
         )
+        status = conn.execute("SELECT status FROM searches WHERE id=?", (search_id,)).fetchone()["status"]
+        conn.execute(
+            "UPDATE searches SET next_run_at=? WHERE id=?",
+            (_next_run_at(schedule) if status == "active" else None, search_id),
+        )
 
 
 def _json(value, fallback):
@@ -173,7 +178,7 @@ def _search(row):
     item = dict(row)
     item["profile"] = _json(item.pop("profile_json"), {})
     item["source_adapters"] = _json(item.pop("source_adapters_json"), [])
-    item["next_run_at"] = _next_run_at(item.get("schedule"))
+    item["next_run_at"] = _next_run_at(item.get("schedule")) if item.get("status") == "active" else None
     return item
 
 
@@ -291,7 +296,13 @@ def record_run(search_id, status, counts, errors=None, started_at=None, finished
             "INSERT INTO runs (id,search_id,started_at,finished_at,status,runtime_seconds,fetched_count,retained_count,rejected_count,notification_count,source_errors_json) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
             (run_id, search_id, started, finished, status, runtime, counts.get("fetched", 0), counts.get("retained", 0), counts.get("rejected", 0), counts.get("notifications", 0), json.dumps(errors or [])),
         )
-        conn.execute("UPDATE searches SET last_run_id=?, updated_at=? WHERE id=?", (run_id, now if (now := utc_now()) else now, search_id))
+        updated = utc_now()
+        row = conn.execute("SELECT status, schedule FROM searches WHERE id=?", (search_id,)).fetchone()
+        next_run = _next_run_at(row["schedule"]) if row and row["status"] == "active" else None
+        conn.execute(
+            "UPDATE searches SET last_run_id=?, next_run_at=?, updated_at=? WHERE id=?",
+            (run_id, next_run, updated, search_id),
+        )
     return run_id
 
 
@@ -337,7 +348,11 @@ def apply_search_action(search_id, action, path=None):
         if not row:
             return False
         if action != "run":
-            conn.execute("UPDATE searches SET status=?, updated_at=? WHERE id=?", (statuses[action], utc_now(), search_id))
+            status = statuses[action]
+            conn.execute(
+                "UPDATE searches SET status=?, next_run_at=?, updated_at=? WHERE id=?",
+                (status, _next_run_at(get_search(search_id, path)["schedule"]) if status == "active" else None, utc_now(), search_id),
+            )
         return True
 
 
@@ -356,6 +371,9 @@ def update_search(search_id, changes, path=None):
         for key in allowed & changes.keys():
             fields.append(f"{key}=?")
             values.append(changes[key])
+        if "schedule" in changes:
+            fields.append("next_run_at=?")
+            values.append(_next_run_at(changes["schedule"]))
         values.append(search_id)
         conn.execute(f"UPDATE searches SET {', '.join(fields)} WHERE id=?", values)
         return True
