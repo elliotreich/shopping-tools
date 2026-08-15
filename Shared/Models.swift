@@ -90,7 +90,7 @@ struct SearchResponse: Codable {
 struct HealthResponse: Codable { let status: String }
 
 enum AppConfig {
-    static let defaultAPI = "http://100.121.190.104:8091/api"
+    static let defaultAPI = "http://100.121.190.104:8092/api"
     static var apiBase: String { UserDefaults.standard.string(forKey: "apiBase") ?? defaultAPI }
     static var apiToken: String { UserDefaults.standard.string(forKey: "apiToken") ?? "" }
 }

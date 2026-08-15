@@ -1,0 +1,23 @@
+[Unit]
+Description=Shopping Tools authenticated discovery review API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=elliot
+WorkingDirectory=/home/elliot/apps/shopping-tools
+EnvironmentFile=/home/elliot/var/lib/shopping-tools/discovery.env
+Environment=SHOPPING_TOOLS_HOST=0.0.0.0
+Environment=SHOPPING_TOOLS_PORT=8092
+Environment=SHOPPING_TOOLS_SEARXNG_URL=http://127.0.0.1:8888/search
+Environment="SHOPPING_TOOLS_DB_PATH=/home/elliot/syncthing-shared/1_projects/Menswear Watcher/seen.db"
+ExecStart=/usr/bin/python3 server.py
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

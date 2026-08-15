@@ -76,6 +76,11 @@ The committed `shopping-discovery-runner@.service` plus the patio and jobs
 timers provide bounded, locked, journaled runs. Install them only after the
 checkout and outside-checkout data directories exist.
 
+The review API is isolated on port `8092` while the legacy Shopping Tools
+service remains on `8091`; this permits a controlled migration without
+interrupting the existing retailer/resale clients. The Mac app defaults to
+`8092`.
+
 ## Endpoints
 
 All responses are JSON and carry `Access-Control-Allow-Origin: *` so the Mac
