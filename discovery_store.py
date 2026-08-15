@@ -3,7 +3,7 @@ import json
 import os
 import sqlite3
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -148,10 +148,32 @@ def _json(value, fallback):
         return fallback
 
 
+def _next_run_at(schedule, now=None):
+    """Return the next UTC occurrence for the simple schedules we install."""
+    now = now or datetime.now(timezone.utc)
+    fields = str(schedule).split()
+    if len(fields) != 5 or fields[2:] != ["*", "*", "*"]:
+        return None
+    try:
+        minute = int(fields[0])
+        hours = [int(value) for value in fields[1].split(",")]
+    except ValueError:
+        return None
+    candidates = []
+    for day_offset in range(8):
+        day = now.replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=day_offset)
+        for hour in hours:
+            candidate = day.replace(hour=hour, minute=minute)
+            if candidate > now:
+                candidates.append(candidate)
+    return min(candidates).isoformat() if candidates else None
+
+
 def _search(row):
     item = dict(row)
     item["profile"] = _json(item.pop("profile_json"), {})
     item["source_adapters"] = _json(item.pop("source_adapters_json"), [])
+    item["next_run_at"] = _next_run_at(item.get("schedule"))
     return item
 
 

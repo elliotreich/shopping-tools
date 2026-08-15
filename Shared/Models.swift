@@ -19,6 +19,10 @@ struct DiscoverySearch: Codable, Identifiable {
     let status: String
     let lastRunId: String?
     let nextRunAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, kind, profile, sourceAdapters, schedule, status, lastRunId, nextRunAt
+    }
 }
 
 struct DiscoveryFinding: Codable, Identifiable {
@@ -44,6 +48,13 @@ struct DiscoveryFinding: Codable, Identifiable {
     let salary: String?
     let fitScore: Double?
     let applicationStatus: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, searchId, kind, title, source, sourceId, url
+        case imageURL = "imageUrl", price, isFree, location, description, score
+        case scoreReasons, discoveredAt, freshness, status, company, role, salary
+        case fitScore, applicationStatus
+    }
 }
 
 struct DiscoveryOperation: Codable, Identifiable {
@@ -58,6 +69,11 @@ struct DiscoveryOperation: Codable, Identifiable {
     let rejectedCount: Int
     let notificationCount: Int
     let sourceErrors: [String]
+
+    enum CodingKeys: String, CodingKey {
+        case id, searchId, startedAt, finishedAt, status, runtimeSeconds
+        case fetchedCount, retainedCount, rejectedCount, notificationCount, sourceErrors
+    }
 }
 
 struct SearchesResponse: Codable { let searches: [DiscoverySearch] }

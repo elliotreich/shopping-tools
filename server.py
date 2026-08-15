@@ -62,7 +62,7 @@ class ShoppingToolsHandler(BaseHTTPRequestHandler):
         return {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "GET, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, X-Requested-With",
+            "Access-Control-Allow-Headers": "Authorization, Content-Type, X-Requested-With",
             "Access-Control-Max-Age": "86400",
         }
 

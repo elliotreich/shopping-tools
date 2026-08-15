@@ -169,6 +169,7 @@ struct SearchesView: View {
                 HStack { Text(search.name).font(.headline); Spacer(); Text(search.status.capitalized).foregroundStyle(.secondary) }
                 Text(search.profile.keywords?.joined(separator: " • ") ?? "").font(.subheadline).foregroundStyle(.secondary)
                 Text("Sources: \(search.sourceAdapters.joined(separator: ", "))  ·  Schedule: \(search.schedule)").font(.caption).foregroundStyle(.secondary)
+                if let nextRunAt = search.nextRunAt { Text("Next run: \(nextRunAt)").font(.caption).foregroundStyle(.secondary) }
                 HStack {
                     Button("Run Now") { Task { await model.searchAction(search, "run") } }
                     if search.status == "paused" { Button("Resume") { Task { await model.searchAction(search, "resume") } } }
@@ -229,13 +230,18 @@ struct OperationsView: View {
     @ObservedObject var model: DiscoveryModel
 
     var body: some View {
-        List(model.operations) { operation in
+        VStack(alignment: .leading, spacing: 0) {
+            if let search = model.searches.first(where: { $0.id == model.selectedSearchID }), let nextRunAt = search.nextRunAt {
+                Text("Next run for \(search.name): \(nextRunAt)").font(.subheadline).foregroundStyle(.secondary).padding(16)
+            }
+            List(model.operations) { operation in
             VStack(alignment: .leading, spacing: 6) {
                 HStack { Text(operation.status.capitalized).font(.headline); Spacer(); Text(operation.startedAt).font(.caption).foregroundStyle(.secondary) }
                 Text("Fetched \(operation.fetchedCount)  ·  Retained \(operation.retainedCount)  ·  Rejected \(operation.rejectedCount)  ·  Notifications \(operation.notificationCount)").font(.subheadline)
                 if let runtime = operation.runtimeSeconds { Text("Runtime \(runtime, specifier: "%.1f")s") .font(.caption).foregroundStyle(.secondary) }
                 if !operation.sourceErrors.isEmpty { Text(operation.sourceErrors.joined(separator: "\n")).foregroundStyle(.red).font(.caption) }
             }.padding(.vertical, 8)
+            }
         }.navigationTitle("Operations")
     }
 }
