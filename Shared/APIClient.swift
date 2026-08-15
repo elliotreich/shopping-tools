@@ -102,3 +102,26 @@ struct LinkButton: View {
         .buttonStyle(.link)
     }
 }
+
+struct RemoteImage: View {
+    let url: String
+    @State private var image: NSImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                Image(nsImage: image).resizable().scaledToFill()
+            } else {
+                Color.gray.opacity(0.15)
+            }
+        }
+        .task(id: url) {
+            guard let remoteURL = URL(string: url) else { return }
+            var request = URLRequest(url: remoteURL)
+            request.timeoutInterval = 20
+            if !AppConfig.apiToken.isEmpty { request.setValue("Bearer \(AppConfig.apiToken)", forHTTPHeaderField: "Authorization") }
+            guard let (data, _) = try? await URLSession.shared.data(for: request), let loaded = NSImage(data: data) else { return }
+            image = loaded
+        }
+    }
+}

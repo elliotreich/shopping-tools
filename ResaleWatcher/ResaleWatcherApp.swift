@@ -124,10 +124,8 @@ struct FindingCard: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            if let image = finding.imageURL, let url = URL(string: image), !image.isEmpty {
-                AsyncImage(url: url) { phase in
-                    if let image = phase.image { image.resizable().scaledToFill() } else { Color.gray.opacity(0.15) }
-                }
+            if let image = finding.imageURL, URL(string: image) != nil, !image.isEmpty {
+                RemoteImage(url: image)
                 .frame(width: 180, height: 135).clipShape(RoundedRectangle(cornerRadius: 10))
             } else {
                 ZStack { Color.accentColor.opacity(0.12); Image(systemName: finding.kind == "jobs" ? "briefcase.fill" : "leaf.fill").font(.system(size: 36)).foregroundStyle(.tint) }
