@@ -1,5 +1,6 @@
 """Small, source-specific adapters for the first reviewable vertical slice."""
 import html
+import hashlib
 import json
 import re
 from html.parser import HTMLParser
@@ -121,6 +122,7 @@ def _reasons(title, price):
 
 def load_jobs(directory, limit=400):
     findings = []
+    seen_urls = set()
     for path in sorted(Path(directory).glob("jobs-*.json")):
         try:
             records = json.loads(path.read_text())
@@ -129,6 +131,9 @@ def load_jobs(directory, limit=400):
         for job in records:
             if job.get("archived") or not job.get("url") or not job.get("role"):
                 continue
+            if job["url"] in seen_urls:
+                continue
+            seen_urls.add(job["url"])
             location = job.get("location", "")
             text = " ".join(str(job.get(key, "")) for key in ("org", "role", "description", "track"))
             score = 50
@@ -143,7 +148,7 @@ def load_jobs(directory, limit=400):
                 "search_id": "jobs",
                 "kind": "jobs",
                 "source": job.get("source") or path.stem,
-                "source_id": str(job.get("id")),
+                "source_id": f"{job.get('source') or path.stem}:{hashlib.sha256(job['url'].encode()).hexdigest()[:20]}",
                 "title": job.get("role", "Untitled role"),
                 "url": job["url"],
                 "image_url": "",

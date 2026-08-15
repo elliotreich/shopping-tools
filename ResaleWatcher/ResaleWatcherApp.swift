@@ -13,6 +13,7 @@ final class DiscoveryModel: ObservableObject {
     @Published var findings: [DiscoveryFinding] = []
     @Published var operations: [DiscoveryOperation] = []
     @Published var selectedSearchID: String?
+    @Published var findingStatus = "new"
     @Published var message = "Enter the API token in Settings, then refresh."
     @Published var isLoading = false
     private let client = APIClient()
@@ -22,7 +23,7 @@ final class DiscoveryModel: ObservableObject {
         do {
             searches = try await client.searches()
             if selectedSearchID == nil { selectedSearchID = searches.first?.id }
-            findings = try await client.findings(searchID: selectedSearchID)
+            findings = try await client.findings(searchID: selectedSearchID, status: findingStatus)
             operations = try await client.operations(searchID: selectedSearchID)
             message = "Updated \(findings.count) reviewable findings."
         } catch {
@@ -34,9 +35,14 @@ final class DiscoveryModel: ObservableObject {
     func selectSearch(_ id: String?) async {
         selectedSearchID = id
         do {
-            findings = try await client.findings(searchID: id)
+            findings = try await client.findings(searchID: id, status: findingStatus)
             operations = try await client.operations(searchID: id)
         } catch { message = error.localizedDescription }
+    }
+
+    func setFindingStatus(_ status: String) async {
+        findingStatus = status
+        await refresh()
     }
 
     func searchAction(_ search: DiscoverySearch, _ action: String) async {
@@ -107,6 +113,13 @@ struct ReviewView: View {
                     ForEach(model.searches) { Text($0.name).tag($0.id) }
                 }
                 .frame(width: 220)
+                Picker("Status", selection: Binding(get: { model.findingStatus }, set: { value in Task { await model.setFindingStatus(value) } })) {
+                    Text("New").tag("new")
+                    Text("Saved").tag("saved")
+                    Text("Dismissed").tag("dismissed")
+                    Text("All statuses").tag("all")
+                }
+                .frame(width: 150)
             }
             ScrollView {
                 LazyVStack(spacing: 14) {
@@ -144,8 +157,19 @@ struct FindingCard: View {
                     if let location = finding.location, !location.isEmpty { Text("• \(location)") }
                     Text("• \(finding.source)")
                 }.font(.subheadline).foregroundStyle(.secondary)
+                if finding.kind == "jobs" {
+                    HStack(spacing: 8) {
+                        if let role = finding.role, !role.isEmpty { Text(role) }
+                        if let salary = finding.salary, !salary.isEmpty { Text("• \(salary)") }
+                        if let fitScore = finding.fitScore { Text("• Fit \(Int(fitScore))") }
+                        if let applicationStatus = finding.applicationStatus, !applicationStatus.isEmpty { Text("• \(applicationStatus)") }
+                    }.font(.caption).foregroundStyle(.secondary)
+                }
                 if let description = finding.description { Text(description).font(.callout).foregroundStyle(.secondary).lineLimit(3) }
                 if !finding.scoreReasons.isEmpty { Text(finding.scoreReasons.joined(separator: "  •  ")).font(.caption).foregroundStyle(.tint) }
+                if let discoveredAt = finding.discoveredAt, !discoveredAt.isEmpty {
+                    Text("Discovered \(discoveredAt)  •  Freshness: \(finding.freshness ?? "unknown")").font(.caption).foregroundStyle(.secondary)
+                }
                 HStack {
                     LinkButton(title: "Open original", url: finding.url)
                     Spacer()
@@ -233,6 +257,9 @@ struct OperationsView: View {
         VStack(alignment: .leading, spacing: 0) {
             if let search = model.searches.first(where: { $0.id == model.selectedSearchID }), let nextRunAt = search.nextRunAt {
                 Text("Next run for \(search.name): \(nextRunAt)").font(.subheadline).foregroundStyle(.secondary).padding(16)
+            }
+            if let lastRun = model.operations.first {
+                Text("Last run: \(lastRun.startedAt) · \(lastRun.status.capitalized)").font(.subheadline).foregroundStyle(.secondary).padding(.horizontal, 16)
             }
             List(model.operations) { operation in
             VStack(alignment: .leading, spacing: 6) {

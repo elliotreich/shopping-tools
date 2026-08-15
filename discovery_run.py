@@ -40,6 +40,7 @@ def run(search_id):
             counts["fetched"] = len(findings)
             for finding in findings:
                 store.upsert_finding(finding)
+            store.expire_missing(search_id, [finding["source_id"] for finding in findings])
             counts["retained"] = len(findings)
             store.record_run(search_id, "succeeded", counts, errors, started_at=started)
             print(f"{search_id}: fetched={counts['fetched']} retained={counts['retained']}")

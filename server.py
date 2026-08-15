@@ -61,7 +61,7 @@ class ShoppingToolsHandler(BaseHTTPRequestHandler):
     def _cors_headers(self) -> dict:
         return {
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, OPTIONS",
+            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
             "Access-Control-Allow-Headers": "Authorization, Content-Type, X-Requested-With",
             "Access-Control-Max-Age": "86400",
         }

@@ -37,6 +37,23 @@ class StoreTests(unittest.TestCase):
             self.assertEqual(4, operation["fetched_count"])
             self.assertEqual(["Craigslist timeout"], operation["source_errors"])
 
+    def test_search_exposes_next_run_for_installed_schedule(self):
+        with patch.dict(os.environ, {"DISCOVERY_DB_PATH": self.db}):
+            discovery_store.init()
+            searches = {item["id"]: item for item in discovery_store.list_searches()}
+            self.assertTrue(searches["patio"]["next_run_at"])
+            self.assertTrue(searches["jobs"]["next_run_at"])
+
+    def test_missing_new_findings_become_expired(self):
+        with patch.dict(os.environ, {"DISCOVERY_DB_PATH": self.db}):
+            discovery_store.init()
+            discovery_store.upsert_finding({
+                "search_id": "jobs", "kind": "jobs", "source": "test", "source_id": "old",
+                "title": "Old role", "url": "https://example.com/old",
+            })
+            self.assertEqual(1, discovery_store.expire_missing("jobs", ["current"]))
+            self.assertEqual("expired", discovery_store.list_findings("jobs", "expired")[0]["status"])
+
 
 class SourceTests(unittest.TestCase):
     def test_craigslist_static_results_parse(self):

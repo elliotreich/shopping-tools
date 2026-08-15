@@ -10,7 +10,8 @@ HTTP backend for Mac SwiftUI clients:
   job findings, with run health and persistent review actions.
 
 Zero third-party dependencies: Python stdlib only (`http.server`, `sqlite3`,
-`urllib`, `json`). Runs on the VPS on port **8091**.
+`urllib`, `json`). The legacy backend runs on port **8091**; the authenticated
+Discovery Review API runs on port **8092** from the committed VPS checkout.
 
 ## Requirements
 
@@ -69,7 +70,7 @@ API routes:
 - `GET /api/discovery/searches`
 - `GET /api/discovery/findings?search_id=patio&status=new&limit=100`
 - `GET /api/discovery/operations?search_id=patio`
-- `POST /api/discovery/searches/<id>/actions` with `run`, `pause`, `resume`, or `complete`
+- `POST /api/discovery/searches/<id>/actions` with `run`, `pause`, `resume`, `complete`, or `edit` (the edit body may update name, keywords, budget, location, and schedule)
 - `POST /api/discovery/findings/<id>/actions` with `save`, `dismiss`, `contacted`, `purchased`, `applied`, `expired`, or `restore`
 
 The committed `shopping-discovery-runner@.service` plus the patio and jobs
@@ -79,7 +80,8 @@ checkout and outside-checkout data directories exist.
 The review API is isolated on port `8092` while the legacy Shopping Tools
 service remains on `8091`; this permits a controlled migration without
 interrupting the existing retailer/resale clients. The Mac app defaults to
-`8092`.
+`8092`. The API's `OPTIONS` response permits authenticated `POST` actions for
+browser-style clients as well as the native Mac app.
 
 ## Endpoints
 

@@ -260,6 +260,22 @@ def upsert_finding(finding, path=None):
         )
 
 
+def expire_missing(search_id, source_ids, path=None):
+    """Hide previously new records that a complete source scan no longer returns."""
+    init(path)
+    source_ids = set(source_ids)
+    with connect(path) as conn:
+        rows = conn.execute("SELECT id, source_id FROM findings WHERE search_id=? AND status='new'", (search_id,)).fetchall()
+        missing = [row["id"] for row in rows if row["source_id"] not in source_ids]
+        if missing:
+            placeholders = ",".join("?" for _ in missing)
+            conn.execute(
+                f"UPDATE findings SET status='expired', updated_at=? WHERE id IN ({placeholders})",
+                (utc_now(), *missing),
+            )
+        return len(missing)
+
+
 def record_run(search_id, status, counts, errors=None, started_at=None, finished_at=None, path=None):
     init(path)
     started = started_at or utc_now()
