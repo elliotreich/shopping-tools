@@ -6,9 +6,7 @@ After=network-online.target
 Type=oneshot
 User=elliot
 WorkingDirectory=/home/elliot/apps/shopping-tools
-Environment=DISCOVERY_DB_PATH=/home/elliot/var/lib/shopping-tools/discovery.sqlite3
-Environment=DISCOVERY_LOCK_PATH=/home/elliot/var/lock/shopping-tools-discovery.lock
-Environment=JOB_AGENTS_DIR=/home/elliot/syncthing-shared/2_areas/Digital Systems/job-agents
+EnvironmentFile=/home/elliot/var/lib/shopping-tools/discovery.env
 ExecStart=/usr/bin/timeout --signal=TERM 5m /usr/bin/python3 discovery_run.py --search-id %i
 StandardOutput=journal
 StandardError=journal
