@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 
 import discovery_store as store
-from discovery_sources import fetch_craigslist_for_search, fetch_facebook_indexed, load_jobs
+from discovery_sources import fetch_craigslist_for_search, fetch_facebook_indexed, fetch_menswear_indexed, load_jobs
 
 
 def run(search_id):
@@ -45,6 +45,8 @@ def run(search_id):
                         source_findings, source_errors, source_rejected = fetch_craigslist_for_search(search)
                     elif adapter == "facebook-public-indexed":
                         source_findings, source_errors, source_rejected = fetch_facebook_indexed(search)
+                    elif adapter == "menswear-indexed":
+                        source_findings, source_errors, source_rejected = fetch_menswear_indexed(search)
                     else:
                         source_findings, source_errors, source_rejected = [], [f"unsupported source adapter: {adapter}"], 0
                     errors.extend(source_errors)

@@ -9,7 +9,7 @@ A dependency-light Python backend (stdlib only) for two Mac SwiftUI clients:
 
 - **Shopping Compass** — current-retailer price/search comparison
   (`/api/search` → local SearXNG).
-- **Resale Watcher** — read-only view of Menswear Watcher's scored listings
+- **Finder** — unified visual review app for patio, chairs, menswear, and jobs
   (`/api/resale`, `/api/resale/summary`).
 - **Discovery Review** — one authenticated search/run/finding store for goods
   profiles and jobs, with a SwiftUI review/control surface.

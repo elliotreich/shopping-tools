@@ -1,4 +1,4 @@
-"""HTTP backend for the Shopping Compass and Resale Watcher Mac apps.
+"""HTTP backend for the Finder and Shopping Compass Mac apps.
 
 Stdlib only: http.server + sqlite3 + urllib. No third-party dependencies.
 

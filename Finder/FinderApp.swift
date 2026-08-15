@@ -1,9 +1,9 @@
 import SwiftUI
 
 @main
-struct ResaleWatcherApp: App {
+struct FinderApp: App {
     var body: some Scene {
-        WindowGroup("Discovery Review") { DiscoveryReviewView() }
+        WindowGroup("Finder") { DiscoveryReviewView() }
     }
 }
 
@@ -114,7 +114,7 @@ struct ReviewView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Review inbox").font(.largeTitle.bold())
+                    Text("Finder review inbox").font(.largeTitle.bold())
                     Text(model.message).foregroundStyle(.secondary)
                 }
                 Spacer()

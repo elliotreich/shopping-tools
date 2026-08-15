@@ -4,8 +4,9 @@ HTTP backend for Mac SwiftUI clients:
 
 - **Shopping Compass** — compares a product query across current retailers
   (Target, Walmart, Amazon, Home Depot, Costco) via a local SearXNG instance.
-- **Resale Watcher** — read-only view of Menswear Watcher's scored resale
-  listings (`seen.db`).
+- **Finder** — the single visual discovery app for goods and jobs. Chairs,
+  patio furniture, menswear, and jobs are profiles in one workflow, not
+  separate apps or runners.
 - **Discovery Review** — authenticated visual review inbox for patio goods and
   job findings, with run health and persistent review actions. All recurring
   searches use this one runner, database, API, and Mac app.
@@ -18,7 +19,8 @@ Discovery Review API runs on port **8092** from the committed VPS checkout.
 
 - Python 3.8+ (tested on 3.10)
 - A local SearXNG instance for `/api/search` (JSON output enabled)
-- Menswear Watcher's `seen.db` (only read; never written)
+- The former Menswear Watcher data remains an import/source boundary while
+  the unified `menswear-indexed` adapter takes over recurring discovery.
 
 ## Quick start
 
@@ -65,6 +67,10 @@ The unified workflow seeds these searches:
   normalized into the same finding model with company, role, location, salary,
   fit score, source link, and application status. Jobs are a separate finding
   kind, but still use the same review inbox and operations history.
+- `chair` — general chair/seating discovery using the same marketplace
+  adapters as patio and garage searches.
+- `menswear` — public indexed Grailed, eBay, and The RealReal discovery using
+  the same normalized finding model and review actions.
 
 Goods searches default to free or under $50, 11367/NYC-area pickup, and Honda
 Accord transport constraints. One-time goods searches are seeded paused; patio

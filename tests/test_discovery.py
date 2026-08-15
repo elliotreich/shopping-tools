@@ -72,6 +72,13 @@ class StoreTests(unittest.TestCase):
             self.assertEqual("paused", created["status"])
             self.assertIsNone(created["next_run_at"])
 
+    def test_finder_profiles_share_one_workflow(self):
+        definitions = {item["id"]: item for item in templates()}
+        self.assertEqual("goods", definitions["chair"]["kind"])
+        self.assertEqual(["menswear-indexed"], definitions["menswear"]["source_adapters"])
+        self.assertEqual("active", definitions["menswear"]["status"])
+        self.assertEqual("jobs", definitions["jobs"]["kind"])
+
     def test_scheduler_matches_shared_utc_schedules(self):
         from datetime import datetime, timezone
 

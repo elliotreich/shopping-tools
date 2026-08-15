@@ -18,6 +18,7 @@ def _goods(
     schedule="30 10 * * *",
     status="paused",
     size_constraints="fits in vehicle; local pickup",
+    source_adapters=("craigslist-indexed", "facebook-public-indexed"),
 ):
     return {
         "id": search_id,
@@ -35,7 +36,7 @@ def _goods(
             "negative_keywords": list(negative_keywords),
             "hard_reject_keywords": list(hard_reject_keywords),
         },
-        "source_adapters": ["craigslist-indexed", "facebook-public-indexed"],
+        "source_adapters": list(source_adapters),
         "schedule": schedule,
         "status": status,
     }
@@ -51,6 +52,17 @@ TEMPLATES = [
         ("broken tilt", "broken cylinder", "bed bugs", "smoke odor"),
         budget=650,
         schedule="30 9 * * *",
+        size_constraints="fits in vehicle or disassembles; local pickup",
+    ),
+    _goods(
+        "chair",
+        "Used chairs and seating",
+        ("office chair", "ergonomic chair", "Herman Miller", "Steelcase", "Haworth", "Humanscale", "lounge chair", "recliner", "folding chair"),
+        ("ergonomic", "lumbar", "adjustable", "office chair", "comfortable", "lounge", "recliner", "folding", "clean", "leather"),
+        ("broken", "mold", "mildew", "smoke odor", "bed bugs", "water damage", "unstable", "missing parts"),
+        ("mold", "mildew", "smoke odor", "bed bugs", "water damage", "unstable"),
+        budget=650,
+        schedule="0 9 * * *",
         size_constraints="fits in vehicle or disassembles; local pickup",
     ),
     _goods(
@@ -117,6 +129,19 @@ TEMPLATES = [
         budget=50,
         schedule="30 12 * * *",
         size_constraints="small enough for Honda Accord; local pickup",
+    ),
+    _goods(
+        "menswear",
+        "Menswear and formalwear",
+        ("tuxedo", "dinner jacket", "black tie", "formal jacket", "blazer", "designer menswear", "wool suit"),
+        ("tuxedo", "dinner jacket", "black tie", "wool", "cashmere", "made in italy", "brioni", "kiton", "loro piana", "zegna", "canali"),
+        ("costume", "damaged", "stained", "torn", "broken", "replica", "fake"),
+        ("costume", "damaged", "stained", "torn", "broken", "replica", "fake"),
+        budget=None,
+        schedule="0 7,13,19 * * *",
+        status="active",
+        size_constraints="ships or fits in vehicle; measurements required before purchase",
+        source_adapters=("menswear-indexed",),
     ),
     {
         "id": "jobs",

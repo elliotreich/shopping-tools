@@ -228,6 +228,48 @@ def fetch_facebook_indexed(search, limit=40):
     return findings, errors, rejected
 
 
+def fetch_menswear_indexed(search, limit=80):
+    """Search public indexed resale listings through the shared SearXNG route."""
+    profile = search["profile"]
+    findings = []
+    errors = []
+    rejected = 0
+    seen = set()
+    domains = ("grailed.com/listings", "ebay.com/itm", "therealreal.com/products")
+    for domain in domains:
+        for query in profile.get("keywords", []):
+            params = urlencode({"q": f"site:{domain} {query}", "format": "json", "categories": "general"})
+            try:
+                request = Request(f"{_searxng_url()}?{params}", headers={"User-Agent": "DiscoveryReview/1.0"})
+                with urlopen(request, timeout=15) as response:
+                    payload = json.loads(response.read().decode("utf-8", "replace"))
+            except Exception as exc:
+                errors.append(f"{domain} {query}: {type(exc).__name__}: {exc}")
+                continue
+            for result in payload.get("results", []):
+                url = result.get("url", "").split("?")[0]
+                if domain not in url or url in seen:
+                    continue
+                title = re.sub(r"\s*\|\s*(Grailed|eBay|The RealReal).*$", "", result.get("title", "")).strip()
+                if not title:
+                    continue
+                description = result.get("content", "")[:800]
+                price_match = re.search(r"\$([0-9,]+(?:\.\d{2})?)", f"{title} {description}")
+                price = float(price_match.group(1).replace(",", "")) if price_match else None
+                item = {"url": url, "title": title, "description": description, "price": price, "image_url": result.get("img_src", result.get("thumbnail", ""))}
+                normalized = _normalize_goods(item, search["id"], profile, domain.split(".")[0], item["image_url"])
+                if not normalized:
+                    rejected += 1
+                    continue
+                normalized["source_id"] = f"{domain}:{hashlib.sha256(url.encode()).hexdigest()[:20]}"
+                normalized["raw"]["profile_key"] = "menswear"
+                seen.add(url)
+                findings.append(normalized)
+                if len(findings) >= limit:
+                    return findings, errors, rejected
+    return findings, errors, rejected
+
+
 def load_jobs(directory, profile=None, search_id="jobs", limit=400):
     profile = profile or {"keywords": ["policy", "civic", "arts", "media", "public service"]}
     findings = []
