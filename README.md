@@ -293,6 +293,13 @@ temporary SQLite database with the exact Menswear Watcher schema. Tests also
 assert the read-only guarantee (no files created next to the DB, writes
 rejected).
 
+## Maintenance
+
+- **Single runner/DB/API:** all discovery profiles (`patio`, `office-chair`, `menswear`, etc.) share one `discovery.sqlite3`, one lock file, and one authenticated API on `:8092`. Don't run a second copy.
+- **Add a site/retailer:** extend `retailers.py` + SearXNG `site:` query in `search.py`, then add a discovery profile template in `discovery_profiles.py`.
+- **Env changes:** edit `.env` or systemd env, then `systemctl restart shopping-tools` + `shopping-discovery-scheduler`.
+- **Updates:** `git pull` on the committed VPS checkout — no DB migrations; schemas are additive with `PRAGMA user_version`.
+
 ## Data safety
 
 The Menswear Watcher database is opened read-only at the SQLite level
